@@ -1,11 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-import { composeWithDevTools } from "redux-devtools-extension";
 
 import pokeReducer from "./pokeDucks";
+import usuarioReducer, { leerUsuarioActicoAccion } from "./UsuarioDucks";
 
 const rootReducer = combineReducers({
   pokemones: pokeReducer,
+  usuario: usuarioReducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,5 +16,6 @@ export default function generateStore() {
     rootReducer,
     composeEnhancers(applyMiddleware(thunk))
   );
+  leerUsuarioActicoAccion()(store.dispatch);
   return store;
 }

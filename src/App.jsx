@@ -1,15 +1,19 @@
 import Pokemones from "./components/Pokemones";
-import { Provider } from "react-redux";
-import generateStore from "./redux/store";
+
+import Login from "./components/Login";
+import Navbar from "./components/Navbar";
+
+import { Route, Routes } from "react-router-dom";
 
 function App() {
-  const store = generateStore();
   return (
-    <Provider store={store}>
-      <div className="container mt-3">
-        <Pokemones />
-      </div>
-    </Provider>
+    <div className="container mt-3">
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Pokemones />} exact />
+        <Route path="/login" element={<Login />} exact />
+      </Routes>
+    </div>
   );
 }
 
