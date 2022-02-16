@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { cerrarSesionAccion } from "../redux/UsuarioDucks";
+import { cerrarSesionAccion } from "../redux/usuarioDucks";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -22,6 +22,9 @@ const Navbar = () => {
           <>
             <NavLink className="btn btn-dark" to="/">
               Inicio
+            </NavLink>
+            <NavLink className="btn btn-dark" to="/perfil">
+              Perfil
             </NavLink>
             <button className="btn btn-dark" onClick={() => cerrarSesion()}>
               Cerrar sesión

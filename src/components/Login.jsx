@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ingresoUsuarioAccion } from "../redux/UsuarioDucks";
+import { ingresoUsuarioAccion } from "../redux/usuarioDucks";
 
 const Login = () => {
   const dispatch = useDispatch();

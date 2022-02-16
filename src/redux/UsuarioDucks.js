@@ -1,5 +1,7 @@
 import { signInWithPopup, signOut } from "firebase/auth";
-import { auth, provider } from "../firebase";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, provider, db, storage } from "../firebase";
 
 // constantes
 const dataInicial = {
@@ -36,13 +38,32 @@ export const ingresoUsuarioAccion = () => async (dispatch) => {
   });
   try {
     const res = await signInWithPopup(auth, provider);
-    const payload = { uid: res.user.uid, email: res.user.email };
-    dispatch({
-      type: USUARIO_EXITO,
-      payload,
-    });
 
-    localStorage.setItem("usuario", JSON.stringify(payload));
+    const usuario = {
+      uid: res.user.uid,
+      email: res.user.email,
+      displayName: res.user.displayName,
+      photoURL: res.user.photoURL,
+    };
+
+    const docRef = doc(db, "usuarios", usuario.email);
+    const usuarioDB = await getDoc(docRef);
+    if (usuarioDB.exists()) {
+      dispatch({
+        type: USUARIO_EXITO,
+        payload: usuarioDB.data(),
+      });
+
+      localStorage.setItem("usuario", JSON.stringify(usuarioDB.data()));
+    } else {
+      await setDoc(docRef, usuario);
+      dispatch({
+        type: USUARIO_EXITO,
+        payload: usuario,
+      });
+
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+    }
   } catch (error) {
     console.error(error);
     dispatch({
@@ -67,3 +88,61 @@ export const cerrarSesionAccion = () => async (dispatch) => {
     type: CERRAR_SESION,
   });
 };
+
+export const actualizarUsuarioAccion =
+  (nombreActualizado) => async (dispatch, getState) => {
+    dispatch({
+      type: LOADING,
+    });
+
+    const { user } = getState().usuario;
+
+    try {
+      const docRef = doc(db, "usuarios", user.email);
+      await updateDoc(docRef, { displayName: nombreActualizado });
+      const usuario = {
+        ...user,
+        displayName: nombreActualizado,
+      };
+
+      dispatch({
+        type: USUARIO_EXITO,
+        payload: usuario,
+      });
+
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+export const editarFotoAccion =
+  (imagenEditada) => async (dispatch, getState) => {
+    dispatch({
+      type: LOADING,
+    });
+
+    const { user } = getState().usuario;
+
+    try {
+      const imagenRef = ref(storage, `${user.email}/foto perfil`);
+      await uploadBytes(imagenRef, imagenEditada);
+      const imagenURL = await getDownloadURL(
+        ref(storage, `${user.email}/foto perfil`)
+      );
+
+      const docRef = doc(db, "usuarios", user.email);
+      await updateDoc(docRef, { photoURL: imagenURL });
+
+      const usuario = { ...user, photoURL: imagenURL };
+
+      dispatch({
+        type: USUARIO_EXITO,
+        payload: usuario,
+      });
+
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+    } catch (error) {
+      console.error(error);
+    }
+  };

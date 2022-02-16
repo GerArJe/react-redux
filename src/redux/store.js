@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 
 import pokeReducer from "./pokeDucks";
-import usuarioReducer, { leerUsuarioActicoAccion } from "./UsuarioDucks";
+import usuarioReducer, { leerUsuarioActicoAccion } from "./usuarioDucks";
 
 const rootReducer = combineReducers({
   pokemones: pokeReducer,

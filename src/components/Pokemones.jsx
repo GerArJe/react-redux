@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   anteriorPokemonAccion,
   obtenerPokemonesAccion,
@@ -14,19 +13,14 @@ const Pokemones = () => {
   const pokemones = useSelector((store) => store.pokemones.results);
   const next = useSelector((store) => store.pokemones.next);
   const previous = useSelector((store) => store.pokemones.previous);
-  const activo = useSelector((store) => store.usuario.activo);
-  let navigate = useNavigate();
+  
 
   React.useEffect(() => {
-    if (!activo) {
-      navigate("login");
-      return;
-    }
     const fetchData = () => {
       dispatch(obtenerPokemonesAccion());
     };
     fetchData();
-  }, [dispatch, navigate, activo]);
+  }, [dispatch]);
 
   return (
     <div className="row mt-5">
